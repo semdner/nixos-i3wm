@@ -41,6 +41,10 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+# Adjust screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -56,12 +60,14 @@ bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec --no-startup-id dmenu_run
+# bindsym $mod+d exec --no-startup-id dmenu_run
 # A more modern dmenu replacement is rofi:
-# bindcode $mod+40 exec "rofi -modi drun,run -show drun"
+#bindcode $mod+d exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
+bindsym $mod+d exec --no-startup-id rofi -show drun
+# bindsym $mod+BackSpace exec --no-startup-id rofi -show power-menu
 
 # change focus
 bindsym $mod+h focus left
@@ -116,14 +122,14 @@ bindsym $mod+a focus parent
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
 set $ws1 "1: terminal"
-set $ws2 "2: workspace"
+set $ws2 "2: files"
 set $ws3 "3: web"
 set $ws4 "4: mail"
 set $ws5 "5: coding"
 set $ws6 "6: music"
 set $ws7 "7: messaging"
-set $ws8 "8: files"
-set $ws9 "9: utilities"
+set $ws8 "8: utilities"
+set $ws9 "9: applications"
 set $ws10 "10"
 
 # switch to workspace
@@ -155,26 +161,15 @@ workspace_auto_back_and_forth yes
 
 # assign applications to workspaces
 # workspace 1
-assign [class=Alacritty] $ws1
 # workspace 2
 # workspace 3
-assign [class="firefox"] $ws3
+# assign [class="firefox"] $ws3
 # workspace 4
-assign [class="thunderbird"] $ws4
 # workspace 5
-assign [class="Code"] $ws5
 # workspace 6
-assign [class="Spotify"] $ws6
 # workspace 7
-assign [class="discord"] $ws7
-assign [class="whatsapp-desktop-linux"] $ws7
-assign [class="Signal"] $ws7
 # workspace 8
-assign [class="Thunar"] $ws8
 # workspace 9
-assign [class="FreeTube"] $ws9
-assign [class="KeePassXC"] $ws9
-assign [class="Atril"] $ws9
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -185,25 +180,25 @@ bindsym $mod+Shift+r restart
 # bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # set lockscreen background
-set $i3lockwall i3lock -i /home/max/Pictures/backgrounds/underground.png -t
+# set $i3lockwall i3lock -i /home/max/Pictures/backgrounds/underground.png -t
 
 # shutdown / restart / suspend ...
-set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (CTRL+s) shutdown
+# set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (CTRL+s) shutdown
 
-mode "$mode_system" {
-	bindsym l exec --no-startup-id $i3lockwall, mode "default"
-	bindsym e exec --no-startup-id i3-msg exit, mode "default"
-	bindsym s exec --no-startup-id $i3lockwall && systemctl suspend, mode "default"
-	bindsym h exec --no-startup-id $i3lockwall && systemctl hibernate, mode "default"
-	bindsym r exec --no-startup-id systemctl reboot, mode "default"
-	bindsym Ctrl+s exec --no-startup-id systemctl poweroff -i, mode "default"
+# mode "$mode_system" {
+# 	bindsym l exec --no-startup-id $i3lockwall, mode "default"
+# 	bindsym e exec --no-startup-id i3-msg exit, mode "default"
+# 	bindsym s exec --no-startup-id $i3lockwall && systemctl suspend, mode "default"
+# 	bindsym h exec --no-startup-id $i3lockwall && systemctl hibernate, mode "default"
+# 	bindsym r exec --no-startup-id systemctl reboot, mode "default"
+# 	bindsym Ctrl+s exec --no-startup-id systemctl poweroff -i, mode "default"
+#
+# 	# back to normal: Enter or Escape
+# 	bindsym Return mode "default"
+# 	bindsym Escape mode "default"
+# }
 
-	# back to normal: Enter or Escape
-	bindsym Return mode "default"
-	bindsym Escape mode "default"
-}
-
-bindsym  $mod+BackSpace mode "$mode_system"
+# bindsym  $mod+BackSpace mode "$mode_system"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -234,9 +229,9 @@ bindsym $mod+r mode "resize"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-}
+# bar {
+#         status_command i3status
+# }
 
 # floating windows
 for_window [window_role="pop-up"] floating enable
@@ -246,4 +241,7 @@ for_window [window_role="task_dialog"] floating enable
 gaps inner 10px
 
 # set background
-exec --no-startup-id feh --no-fehbg --bg-fill /home/max/Pictures/backgrounds/underground.png
+# exec --no-startup-id feh --no-fehbg --bg-fill /home/max/Pictures/backgrounds/underground.png
+
+# add polybar
+exec_always --no-startup-id ~/.config/polybar/launch.sh
